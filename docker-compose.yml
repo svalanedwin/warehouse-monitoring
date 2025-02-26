@@ -1,24 +1,22 @@
-version: '3.8'
-
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    platform: linux/amd64  # ✅ Add this for ARM64 Macs
+    platform: linux/amd64
     container_name: zookeeper
     ports:
-      - "2182:2181"  # Change port if needed
+      - "2182:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    platform: linux/amd64  # ✅ Add this for ARM64 Macs
+    platform: linux/amd64
     container_name: kafka
     depends_on:
       - zookeeper
     ports:
-      - "9093:9093"   # ✅ Change this to avoid conflicts
+      - "9093:9093"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_RESTART_ATTEMPTS: 10
@@ -32,7 +30,7 @@ services:
     image: postgres:latest
     container_name: postgres
     ports:
-      - "5433:5432"  # ✅ Change this to avoid conflicts
+      - "5433:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
