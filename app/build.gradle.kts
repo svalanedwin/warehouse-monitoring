@@ -1,53 +1,68 @@
 plugins {
-    kotlin("jvm") version( "1.9.0")
-    application
+    kotlin("jvm") version "1.9.0"  // Using Kotlin JVM plugin with version 1.9.0
+    application  // Plugin for creating a runnable application
 }
 
-group = "com.warehousemonitoring"
-version = "1.0-SNAPSHOT"
+group = "com.warehousemonitoring"  // Defines the package group for the project
+version = "1.0-SNAPSHOT"  // Version of the application
 
 application {
-    mainClass.set("com.warehousemonitoring.MainKt")
+    mainClass.set("com.warehousemonitoring.MainKt")  // Sets the main entry point of the application
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral()  // Use Maven Central as the primary repository for dependencies
 }
 
 dependencies {
+    // Core Kotlin and Coroutines libraries
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.coroutines.core)
 
-        implementation(libs.kotlin.stdlib)
-        implementation(libs.kotlinx.coroutines.core)
-        implementation(libs.slf4j.api)
-        implementation(libs.logback.classic)
-        implementation(libs.kafka.clients)
-        implementation(libs.exposed.core)
-        implementation(libs.exposed.dao)
-        implementation(libs.exposed.jdbc)
-        implementation(libs.exposed.java.time)
-        implementation(libs.postgresql)
-        testImplementation(libs.kotest.runner.junit5)
-        testImplementation(libs.kotest.assertions.core)
-        testImplementation(libs.mockk)
-        testImplementation(libs.testcontainers)
-        testImplementation(libs.testcontainers.junit.jupiter)
-        testImplementation(libs.testcontainers.kafka)
-        testImplementation(libs.testcontainers.postgresql)
-        testImplementation(libs.rest.assured)
-        implementation(libs.typesafe.config)
+    // Logging dependencies
+    implementation(libs.slf4j.api)  // SLF4J logging API
+    implementation(libs.logback.classic)  // Logback for logging implementation
 
+    // Kafka dependencies
+    implementation(libs.kafka.clients)
+
+    // Exposed ORM (for database interaction)
+    implementation(libs.exposed.core)  // Core Exposed library
+    implementation(libs.exposed.dao)  // DAO support
+    implementation(libs.exposed.jdbc)  // JDBC support
+    implementation(libs.exposed.java.time)  // Java Time support for Exposed
+
+    // PostgreSQL driver
+    implementation(libs.postgresql)
+
+    // Testing dependencies
+    testImplementation(libs.kotest.runner.junit5)  // Kotest runner for JUnit 5
+    testImplementation(libs.kotest.assertions.core)  // Kotest assertion library
+    testImplementation(libs.mockk)  // Mocking library for Kotlin
+
+    // Testcontainers for integration testing with Kafka and PostgreSQL
+    testImplementation(libs.testcontainers)
+    testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.testcontainers.kafka)
+    testImplementation(libs.testcontainers.postgresql)
+
+    // REST API testing
+    testImplementation(libs.rest.assured)
+
+    // Configuration file support
+    implementation(libs.typesafe.config)
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnitPlatform()  // Configure tests to use JUnit 5
 }
 
 tasks.jar {
     manifest {
-        attributes("Main-Class" to "com.warehousemonitoring.MainKt")
+        attributes("Main-Class" to "com.warehousemonitoring.MainKt")  // Ensure the JAR has the correct entry point
     }
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(17)  // Set JVM toolchain to Java 17
 }

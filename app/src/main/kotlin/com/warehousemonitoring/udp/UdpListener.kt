@@ -6,24 +6,44 @@ import org.slf4j.LoggerFactory
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 
+/**
+ * UDP Listener that listens for incoming UDP packets on a specified port
+ * and forwards the received messages to a Kafka topic.
+ *
+ * @param port The UDP port to listen on.
+ */
 class UdpListener(private val port: Int) {
+    // Logger instance for logging messages
     private val logger = LoggerFactory.getLogger(UdpListener::class.java)
+
+    // Stores the last received UDP message for monitoring/debugging
     private var lastReceivedMessage: String? = null
 
+    /**
+     * Starts listening for UDP packets and forwards them to Kafka.
+     */
     fun startListening() {
         logger.info("🔄 Starting UDP listener on port $port...")
+
+        // Launch a coroutine for non-blocking UDP listening
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                DatagramSocket(port).use { socket ->
+                DatagramSocket(port).use { socket ->  // Open a UDP socket on the specified port
                     logger.info("✅ Successfully bound to UDP port $port")
-                    val buffer = ByteArray(1024)
+                    val buffer = ByteArray(1024)  // Buffer to store received UDP data
 
                     while (true) {
                         val packet = DatagramPacket(buffer, buffer.size)
-                        socket.receive(packet)
+                        socket.receive(packet)  // Receive incoming UDP packet
+
+                        // Convert received bytes to a string and trim unnecessary spaces
                         lastReceivedMessage = String(packet.data, 0, packet.length).trim()
                         logger.info("📥 Received UDP message: $lastReceivedMessage")
-                        KafkaProducerService.sendToKafka("sensor_data", lastReceivedMessage!!)
+
+                        // Send the received message to the Kafka topic "sensor_data"
+                        lastReceivedMessage?.let {
+                            KafkaProducerService.sendToKafka("sensor_data", it)
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -32,6 +52,10 @@ class UdpListener(private val port: Int) {
         }
     }
 
-    // Function to retrieve the last received message
+    /**
+     * Retrieves the last received UDP message.
+     *
+     * @return The last received UDP message, or null if no messages have been received.
+     */
     fun getLastReceivedMessage(): String? = lastReceivedMessage
 }
