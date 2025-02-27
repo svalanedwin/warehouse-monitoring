@@ -16,8 +16,8 @@ object DatabaseConfig {
         Database.connect(dbUrl, driver = "org.postgresql.Driver", user = dbUser, password = dbPassword)
 
         transaction {
-            logger.info("Creating table SensorReadings")
-            SchemaUtils.create(SensorReadings)
+            logger.info("Creating or updating table SensorReadings")
+            SchemaUtils.createMissingTablesAndColumns(SensorReadings)
         }
     }
 }
