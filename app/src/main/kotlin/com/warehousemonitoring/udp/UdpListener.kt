@@ -8,6 +8,7 @@ import java.net.DatagramSocket
 
 class UdpListener(private val port: Int) {
     private val logger = LoggerFactory.getLogger(UdpListener::class.java)
+    private var lastReceivedMessage: String? = null
 
     fun startListening() {
         logger.info("🔄 Starting UDP listener on port $port...")
@@ -20,10 +21,9 @@ class UdpListener(private val port: Int) {
                     while (true) {
                         val packet = DatagramPacket(buffer, buffer.size)
                         socket.receive(packet)
-                        val message = String(packet.data, 0, packet.length).trim()
-
-                        logger.info("📥 Received UDP message: $message")
-                        KafkaProducerService.sendToKafka("sensor_data", message)
+                        lastReceivedMessage = String(packet.data, 0, packet.length).trim()
+                        logger.info("📥 Received UDP message: $lastReceivedMessage")
+                        KafkaProducerService.sendToKafka("sensor_data", lastReceivedMessage!!)
                     }
                 }
             } catch (e: Exception) {
@@ -31,4 +31,7 @@ class UdpListener(private val port: Int) {
             }
         }
     }
+
+    // Function to retrieve the last received message
+    fun getLastReceivedMessage(): String? = lastReceivedMessage
 }

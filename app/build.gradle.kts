@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version( "1.9.0")
     application
 }
 
@@ -15,18 +15,27 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.slf4j:slf4j-api:2.0.7")
-    implementation("ch.qos.logback:logback-classic:1.4.7")
-    implementation("org.apache.kafka:kafka-clients:3.5.1")
-    implementation("org.jetbrains.exposed:exposed-core:0.43.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.43.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.43.0")
-    implementation("org.jetbrains.exposed:exposed-java-time:0.43.0")
-    implementation("org.postgresql:postgresql:42.5.1")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+
+        implementation(libs.kotlin.stdlib)
+        implementation(libs.kotlinx.coroutines.core)
+        implementation(libs.slf4j.api)
+        implementation(libs.logback.classic)
+        implementation(libs.kafka.clients)
+        implementation(libs.exposed.core)
+        implementation(libs.exposed.dao)
+        implementation(libs.exposed.jdbc)
+        implementation(libs.exposed.java.time)
+        implementation(libs.postgresql)
+        testImplementation(libs.kotest.runner.junit5)
+        testImplementation(libs.kotest.assertions.core)
+        testImplementation(libs.mockk)
+        testImplementation(libs.testcontainers)
+        testImplementation(libs.testcontainers.junit.jupiter)
+        testImplementation(libs.testcontainers.kafka)
+        testImplementation(libs.testcontainers.postgresql)
+        testImplementation(libs.rest.assured)
+        implementation(libs.typesafe.config)
+
 }
 
 tasks.test {

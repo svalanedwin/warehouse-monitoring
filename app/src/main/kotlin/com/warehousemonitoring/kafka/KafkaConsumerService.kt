@@ -29,12 +29,15 @@ object KafkaConsumerService {
         subscribe(listOf("sensor_data"))
     }
 
+    private var lastProcessedMessage: String? = null
+
     fun startMonitoring() {
         while (true) {
             val records = consumer.poll(Duration.ofMillis(100))
             for (record in records) {
                 val data = record.value()
-                logger.info("🔎 Processing sensor data: $data")
+                lastProcessedMessage = data // Store the last processed message
+                logger.info("🔎 Processing sensor data init: $data")
                 checkThresholds(data)
             }
         }
@@ -65,4 +68,7 @@ object KafkaConsumerService {
             logger.warn("🚨 ALERT! Sensor $sensorId exceeded threshold with value $value")
         }
     }
+
+    // Function to retrieve the last processed message
+    fun getLastProcessedMessage(): String? = lastProcessedMessage
 }
