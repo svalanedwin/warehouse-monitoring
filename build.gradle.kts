@@ -51,6 +51,7 @@ dependencies {
 
     // Configuration file support
     implementation(libs.typesafe.config)
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1") // Dotenv library for Kotlinimplementation("io.github.cdimascio:dotenv-kotlin:6.4.1") // Dotenv library for Kotlin
 }
 
 tasks.test {

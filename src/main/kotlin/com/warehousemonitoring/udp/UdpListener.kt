@@ -5,6 +5,7 @@ import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import java.net.DatagramPacket
 import java.net.DatagramSocket
+import java.net.BindException
 
 /**
  * UDP Listener that listens for incoming UDP packets on a specified port
@@ -46,6 +47,8 @@ class UdpListener(private val port: Int) {
                         }
                     }
                 }
+            } catch (e: BindException) {
+                logger.error("❌ Port $port is already in use. Please stop the conflicting process or choose a different port.")
             } catch (e: Exception) {
                 logger.error("❌ Error receiving UDP message", e)
             }

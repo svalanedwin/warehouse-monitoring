@@ -20,10 +20,10 @@ object KafkaConsumerService {
      * Kafka consumer configuration properties.
      */
     private val properties = Properties().apply {
-        put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9093")  // Kafka broker address
-        put(ConsumerConfig.GROUP_ID_CONFIG, "monitoring_service")  // Consumer group ID
-        put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer") // Key deserialization
-        put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer") // Value deserialization
+        put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv("KAFKA_BOOTSTRAP_SERVERS") ?: "localhost:9093")
+        put(ConsumerConfig.GROUP_ID_CONFIG, "monitoring_service")
+        put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
+        put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
     }
 
     /**
@@ -45,7 +45,7 @@ object KafkaConsumerService {
         while (true) {
             val records = consumer.poll(Duration.ofMillis(100))
             if (records.isEmpty) {
-                logger.info("No records received from Kafka")
+               // logger.info("No records received from Kafka")
             } else {
                 for (record in records) {
                     logger.info("Processing Kafka record: ${record.value()}")

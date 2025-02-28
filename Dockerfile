@@ -11,6 +11,8 @@ COPY gradle ./gradle
 # Copy the Gradle build files
 COPY build.gradle.kts settings.gradle.kts ./
 
+# Download dependencies (this step is cached unless build.gradle.kts or settings.gradle.kts change)
+RUN ./gradlew dependencies
 # Copy the source code
 COPY src ./src
 
@@ -31,6 +33,7 @@ COPY --from=build /workspace/build/libs/warehouse-monitoring.jar /app/warehouse-
 
 # Expose the port your application will run on
 EXPOSE 8080
-
+EXPOSE 3345/udp
+EXPOSE 3356/udp
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "warehouse-monitoring.jar"]

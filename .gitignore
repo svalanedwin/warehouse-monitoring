@@ -27,8 +27,9 @@ replay_pid*
 
 # Kotlin Gradle plugin data
 .kotlin/
+.kotlinc/
 
-# Ignore Gradle-related files
+# Ignore Kotlin/Java build directories
 .gradle
 build/
 out/
@@ -39,6 +40,11 @@ out/
 *.iml
 *.ipr
 *.iws
+.idea/modules.xml
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/compiler.xml
+.idea/misc.xml
 
 # VS Code settings
 .vscode/
@@ -67,5 +73,45 @@ gradle/wrapper/gradle-wrapper.jar
 *.obj
 *.keystore
 
-# Ignore node_modules (if using Kotlin/JS)
+# Ignore Kotlin/JS and Node.js dependencies
 node_modules/
+.yarn/
+.pnp.cjs
+.pnp.loader.mjs
+
+# Ignore Kotlin Multiplatform caches
+.kotlin/
+.metadata/
+build/
+
+# Kotlin JAR & compiled outputs
+*.ktsc
+*.kjsm
+*.klib
+*.kotlin_module
+
+# Ignore JetBrains IDE index files
+.idea/
+.idea/modules.xml
+.idea/shelf/
+.idea/httpRequests/
+
+# Ignore test coverage reports
+*.ec
+*.exec
+*.coverage
+*.cov
+*.lcov
+
+# Ignore dependency locking files
+gradle/dependency-locks/
+
+# Ignore temporary Kotlin scripting files
+*.main.kts
+*.kts.tmp
+
+# Ignore temporary generated sources
+generated/
+
+# Ignore serialization caches
+*.kcache
