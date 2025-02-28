@@ -20,7 +20,7 @@ object KafkaConsumerService {
      * Kafka consumer configuration properties.
      */
     private val properties = Properties().apply {
-        put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9093")  // Kafka broker address
+        put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9093")  // Kafka broker address
         put(ConsumerConfig.GROUP_ID_CONFIG, "monitoring_service")  // Consumer group ID
         put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer") // Key deserialization
         put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer") // Value deserialization
@@ -43,12 +43,14 @@ object KafkaConsumerService {
      */
     fun startMonitoring() {
         while (true) {
-            val records = consumer.poll(Duration.ofMillis(100))  // Poll for new messages
-            for (record in records) {
-                val data = record.value()
-                lastProcessedMessage = data  // Store the last processed message
-                logger.info("🔎 Processing sensor data init: $data")
-                checkThresholds(data)
+            val records = consumer.poll(Duration.ofMillis(100))
+            if (records.isEmpty) {
+                logger.info("No records received from Kafka")
+            } else {
+                for (record in records) {
+                    logger.info("Processing Kafka record: ${record.value()}")
+                    checkThresholds(record.value())
+                }
             }
         }
     }

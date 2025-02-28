@@ -59,9 +59,13 @@ tasks.test {
 
 tasks.jar {
     manifest {
-        attributes("Main-Class" to "com.warehousemonitoring.MainKt")  // Ensure the JAR has the correct entry point
+        attributes("Main-Class" to "com.warehousemonitoring.MainKt")
     }
+    archiveFileName.set("warehouse-monitoring.jar")
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
 
 kotlin {
     jvmToolchain(17)  // Set JVM toolchain to Java 17

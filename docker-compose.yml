@@ -1,7 +1,8 @@
+version: '3.8'
+
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    platform: linux/amd64
     container_name: zookeeper
     ports:
       - "2182:2181"
@@ -11,19 +12,17 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    platform: linux/amd64
     container_name: kafka
     depends_on:
       - zookeeper
     ports:
       - "9093:9093"
     environment:
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_BROKER_ID: 1
-      KAFKA_RESTART_ATTEMPTS: 10
-      KAFKA_RESTART_DELAY: 5
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9093"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9093"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   postgres:
@@ -37,6 +36,24 @@ services:
       POSTGRES_DB: warehouse
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  warehouse-monitoring:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: warehouse-monitoring
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8081:8080"
+      - "3344:3344/udp"
+      - "3355:3355/udp"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9093"
+      POSTGRES_URL: "jdbc:postgresql://postgres:5432/warehouse"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
 
 volumes:
   postgres_data:

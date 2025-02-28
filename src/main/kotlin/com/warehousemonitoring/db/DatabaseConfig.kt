@@ -10,30 +10,20 @@ import java.util.*
  * Object responsible for database configuration and initialization.
  */
 object DatabaseConfig {
-    // Logger instance for logging database initialization steps
     private val logger = LoggerFactory.getLogger(KafkaProducerService::class.java)
 
-    /**
-     * Initializes the database connection and ensures the necessary table exists.
-     */
     fun init() {
-        // Database connection details (Consider using environment variables or configuration files for security)
-        val dbUrl = "jdbc:postgresql://localhost:5433/warehouse"
+        // Use the service name "postgres" as the hostname
+        val dbUrl = "jdbc:postgresql://postgres:5432/warehouse"
         val dbUser = "user"
         val dbPassword = "password"
 
-        // Logging the database connection attempt
         logger.info("Connecting to database: $dbUrl")
 
-        // Establishing connection to the PostgreSQL database
         Database.connect(dbUrl, driver = "org.postgresql.Driver", user = dbUser, password = dbPassword)
 
-        // Executing a transaction to ensure table existence
         transaction {
-            // Logging schema creation/update process
             logger.info("Creating or updating table SensorReadings")
-
-            // Automatically creates missing tables and columns for the SensorReadings entity
             SchemaUtils.createMissingTablesAndColumns(SensorReadings)
         }
     }

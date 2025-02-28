@@ -17,7 +17,7 @@ object KafkaProducerService {
      * Kafka producer configuration properties.
      */
     private val properties = Properties().apply {
-        put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9093") // Kafka broker address
+        put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9093") // Kafka broker address
         put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer") // Key serializer
         put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer") // Value serializer
     }
