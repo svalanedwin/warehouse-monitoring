@@ -1,6 +1,6 @@
 #  Warehouse Monitoring System
 
-## 📖 Overview
+## 📚 Overview
 The **Warehouse Monitoring System** is designed to track environmental conditions, such as temperature and humidity, within a warehouse. Sensors transmit data via **UDP**, which is then processed and monitored for threshold violations. The system consists of:
 
 - **Warehouse Service**: Collects sensor data and publishes it to **Kafka**.
@@ -8,17 +8,17 @@ The **Warehouse Monitoring System** is designed to track environmental condition
 
 ---
 
-## 🏗️ System Architecture
+## 🏷️ System Architecture
 ### **Components**
 1. **Warehouse Service**
-    - Listens for UDP messages from sensors.
-    - Publishes sensor data to **Kafka**.
+   - Listens for UDP messages from sensors.
+   - Publishes sensor data to **Kafka**.
 2. **Central Monitoring Service**
-    - Consumes sensor data from **Kafka**.
-    - Checks for threshold violations:
-        - 🚨 Temperature > **35°C**
-        - 🚨 Humidity > **50%**
-    - Logs alarms when thresholds are exceeded.
+   - Consumes sensor data from **Kafka**.
+   - Checks for threshold violations:
+      - 🚨 Temperature > **35°C**
+      - 🚨 Humidity > **50%**
+   - Logs alarms when thresholds are exceeded.
 
 ---
 
@@ -109,7 +109,7 @@ docker-compose logs -f warehouse-monitoring
 
 ---
 
-## 📡 Kafka Monitoring
+## 📱 Kafka Monitoring
 
 ### **View Kafka Logs**
 ```sh
@@ -128,7 +128,7 @@ sensor_id=h1;value=40
 
 ---
 
-## 🗄️ PostgreSQL Database Monitoring
+## 🟢 PostgreSQL Database Monitoring
 
 ### **Access PostgreSQL**
 For **manual setup**:
@@ -148,10 +148,43 @@ SELECT * FROM "SensorReadings";
 
 ---
 
-## ✅ Testing
-Run unit tests with:
+## 💪 Testing
+This section covers how to run all test cases, execute individual tests, and enable detailed logs for debugging.
+
+### 📌 Running All Tests
+To execute all test cases in the project, use:
 ```sh
 ./gradlew test
+```
+This will run all unit and integration tests.
+
+### 🎯 Running Individual Tests
+To run a specific test class, use:
+```sh
+./gradlew test --tests "<FullClassName>"
+```
+Replace `<FullClassName>` with:
+
+#### **Configuration & Database Tests**
+```sh
+./gradlew test --tests "com.warehousemonitoring.config.ConfigTest"
+./gradlew test --tests "com.warehousemonitoring.database.DatabaseConfigTest"
+./gradlew test --tests "com.warehousemonitoring.database.SensorReadingsTest"
+```
+#### **Kafka Tests**
+```sh
+./gradlew test --tests "com.warehousemonitoring.kafka.KafkaConsumerServiceTest"
+./gradlew test --tests "com.warehousemonitoring.kafka.KafkaProducerServiceTest"
+```
+#### **Network & UDP Tests**
+```sh
+./gradlew test --tests "com.warehousemonitoring.network.UdpListenerTest"
+```
+
+### 🛠️ Running Tests with Debug Logs
+```sh
+./gradlew test --info
+./gradlew test --debug
 ```
 
 ---
@@ -179,6 +212,5 @@ warehouse-monitoring/
 docker-compose logs kafka
 ```
 
-🔴 **Database Issues**: Verify PostgreSQL credentials in `.env` or `.env.docker`.
-
+🔴 **Database Issues**: Verify PostgreSQL credentials in `.env` or `.env.docker`. 
 
