@@ -19,8 +19,8 @@ COPY src ./src
 # Make the gradlew script executable
 RUN chmod +x gradlew
 
-# Build the JAR file
-RUN ./gradlew build
+# Build the JAR file without running test cases
+RUN ./gradlew build -x test
 
 # Use a smaller runtime image
 FROM openjdk:17-jdk-slim

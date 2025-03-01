@@ -13,52 +13,37 @@ import java.net.BindException
  *
  * @param port The UDP port to listen on.
  */
-class UdpListener(private val port: Int) {
-    // Logger instance for logging messages
+class UdpListener(
+    private val port: Int,
+    private val kafkaProducerService: KafkaProducerService = KafkaProducerService
+) {
     private val logger = LoggerFactory.getLogger(UdpListener::class.java)
-
-    // Stores the last received UDP message for monitoring/debugging
     private var lastReceivedMessage: String? = null
 
-    /**
-     * Starts listening for UDP packets and forwards them to Kafka.
-     */
     fun startListening() {
         logger.info("🔄 Starting UDP listener on port $port...")
-
-        // Launch a coroutine for non-blocking UDP listening
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                DatagramSocket(port).use { socket ->  // Open a UDP socket on the specified port
+                DatagramSocket(port).use { socket ->
                     logger.info("✅ Successfully bound to UDP port $port")
-                    val buffer = ByteArray(1024)  // Buffer to store received UDP data
-
+                    val buffer = ByteArray(1024)
                     while (true) {
                         val packet = DatagramPacket(buffer, buffer.size)
-                        socket.receive(packet)  // Receive incoming UDP packet
-
-                        // Convert received bytes to a string and trim unnecessary spaces
+                        socket.receive(packet)
                         lastReceivedMessage = String(packet.data, 0, packet.length).trim()
                         logger.info("📥 Received UDP message: $lastReceivedMessage")
-
-                        // Send the received message to the Kafka topic "sensor_data"
                         lastReceivedMessage?.let {
-                            KafkaProducerService.sendToKafka("sensor_data", it)
+                            kafkaProducerService.sendToKafka("sensor_data", it)
                         }
                     }
                 }
             } catch (e: BindException) {
-                logger.error("❌ Port $port is already in use. Please stop the conflicting process or choose a different port.")
+                logger.error("❌ Port $port is already in use.")
             } catch (e: Exception) {
                 logger.error("❌ Error receiving UDP message", e)
             }
         }
     }
 
-    /**
-     * Retrieves the last received UDP message.
-     *
-     * @return The last received UDP message, or null if no messages have been received.
-     */
     fun getLastReceivedMessage(): String? = lastReceivedMessage
 }

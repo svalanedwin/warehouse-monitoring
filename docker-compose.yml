@@ -48,7 +48,7 @@ services:
       - "3345:3345/udp"
       - "3356:3356/udp"
     env_file:
-      - .env
+      - .env.docker
 
 volumes:
   postgres_data:

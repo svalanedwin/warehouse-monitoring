@@ -13,7 +13,7 @@ object KafkaProducerService {
     // Logger instance for logging producer events
     private val logger = LoggerFactory.getLogger(KafkaProducerService::class.java)
 
-    /**
+     /**
      * Kafka producer configuration properties.
      */
     private val properties = Properties().apply {
@@ -24,8 +24,9 @@ object KafkaProducerService {
 
     /**
      * KafkaProducer instance responsible for sending messages.
+     * Exposed as internal for testing purposes.
      */
-    private val producer = KafkaProducer<String, String>(properties)
+    internal var producer = KafkaProducer<String, String>(properties)
 
     /**
      * Sends a message to the specified Kafka topic.
@@ -34,6 +35,7 @@ object KafkaProducerService {
      * @param message The message content to send.
      */
     fun sendToKafka(topic: String, message: String) {
+        logger.info("Sending message to Kafka: topic=$topic, message=$message")
         // Create a ProducerRecord with the topic and message
         producer.send(ProducerRecord(topic, message)) { metadata, exception ->
             if (exception == null) {

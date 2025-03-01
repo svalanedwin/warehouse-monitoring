@@ -9,10 +9,17 @@ kafka = "3.6.0"
 exposed = "0.44.0"
 postgresql = "42.6.0"
 kotest = "5.8.0"
-mockk = "1.13.8"
+mockk = "1.13.4"
 testcontainers = "1.19.0"
 rest-assured = "5.4.0"
 typesafe-config = "1.4.2"
+jackson = "2.14.0"
+gson = "2.8.9"
+kotlinx-serialization = "1.5.0"
+spring-kafka = "2.9.0"
+junit = "5.10.0"
+mockito = "5.3.1"
+dotenv = "6.4.1"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -34,3 +41,13 @@ testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "tes
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 rest-assured = { module = "io.rest-assured:rest-assured", version.ref = "rest-assured" }
 typesafe-config = { module = "com.typesafe:config", version.ref = "typesafe-config" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+spring-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref = "spring-kafka" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
+dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv" }

@@ -9,16 +9,9 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.*
 
-/**
- * KafkaConsumerService listens to Kafka topic "sensor_data" and processes sensor readings.
- */
 object KafkaConsumerService {
-    // Logger instance for logging messages
     private val logger = LoggerFactory.getLogger(KafkaConsumerService::class.java)
 
-    /**
-     * Kafka consumer configuration properties.
-     */
     private val properties = Properties().apply {
         put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv("KAFKA_BOOTSTRAP_SERVERS") ?: "localhost:9093")
         put(ConsumerConfig.GROUP_ID_CONFIG, "monitoring_service")
@@ -26,53 +19,35 @@ object KafkaConsumerService {
         put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
     }
 
-    /**
-     * KafkaConsumer instance for reading messages from "sensor_data" topic.
-     */
-    private val consumer = KafkaConsumer<String, String>(properties).apply {
-        subscribe(listOf("sensor_data"))  // Subscribing to the topic
+    var consumer = KafkaConsumer<String, String>(properties).apply {
+        subscribe(listOf("sensor_data"))
     }
 
-    /**
-     * Stores the last processed message for debugging or monitoring purposes.
-     */
     private var lastProcessedMessage: String? = null
 
-    /**
-     * Starts listening for Kafka messages and processes them continuously.
-     */
-    fun startMonitoring() {
+    fun startMonitoring(shouldStopAfterProcessing: Boolean = false) {
         while (true) {
             val records = consumer.poll(Duration.ofMillis(100))
             if (records.isEmpty) {
-               // logger.info("No records received from Kafka")
+                logger.info("No records received from Kafka")
             } else {
                 for (record in records) {
                     logger.info("Processing Kafka record: ${record.value()}")
+                    lastProcessedMessage = record.value()
                     checkThresholds(record.value())
                 }
+                if (shouldStopAfterProcessing) break // Stop after processing test messages
             }
         }
     }
 
-    /**
-     * Parses the sensor data, stores it in the database, and checks for threshold violations.
-     *
-     * @param data Sensor reading in the format "sensor_id=value;value=value".
-     */
-    private fun checkThresholds(data: String) {
+    fun checkThresholds(data: String) {
         logger.info("🔎 Processing sensor data: $data")
 
-        // Splitting input data into key-value pairs
         val parts = data.split(";")
-        val sensorId = parts[0].split("=")[1]  // Extracting sensor ID
-        val value = parts[1].split("=")[1].toInt()  // Extracting sensor value
+        val sensorId = parts[0].split("=")[1]
+        val value = parts[1].split("=")[1].toInt()
 
-        // Determine if the sensor is a temperature sensor (sensor IDs starting with 't')
-        val isTemperature = sensorId.startsWith("t")
-        val threshold = if (isTemperature) 35 else 50  // Set threshold based on sensor type
-
-        // Insert data into the database
         transaction {
             logger.info("Inserting sensor reading: sensor_id=$sensorId, value=$value")
             SensorReadings.insert {
@@ -82,16 +57,11 @@ object KafkaConsumerService {
             }
         }
 
-        // Check if sensor value exceeds the threshold and raise an alert if necessary
+        val threshold = if (sensorId.startsWith("t")) 35 else 50
         if (value > threshold) {
             logger.warn("🚨 ALERT! Sensor $sensorId exceeded threshold with value $value")
         }
     }
 
-    /**
-     * Retrieves the last processed message for monitoring or debugging.
-     *
-     * @return Last processed Kafka message or null if no messages have been processed.
-     */
     fun getLastProcessedMessage(): String? = lastProcessedMessage
 }

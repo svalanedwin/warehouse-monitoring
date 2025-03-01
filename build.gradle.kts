@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.0"  // Using Kotlin JVM plugin with version 1.9.0
     application  // Plugin for creating a runnable application
+    jacoco
 }
 
 group = "com.warehousemonitoring"  // Defines the package group for the project
@@ -48,14 +49,33 @@ dependencies {
 
     // REST API testing
     testImplementation(libs.rest.assured)
+    testImplementation(libs.junit.jupiter.api)  // JUnit 5 API
+    testImplementation(libs.kotlin.test.junit5)  // Kotlin test support
+    testRuntimeOnly(libs.junit.jupiter.engine)  // JUnit 5 engine
+    // Mockito for mocking in tests
+    testImplementation(libs.mockito.core)  // Mockito Core
+    testImplementation(libs.mockito.kotlin)  // Mockito Kotlin support
 
     // Configuration file support
-    implementation(libs.typesafe.config)
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1") // Dotenv library for Kotlinimplementation("io.github.cdimascio:dotenv-kotlin:6.4.1") // Dotenv library for Kotlin
+    implementation(libs.typesafe.config)  // Typesafe config
+    implementation(libs.dotenv.kotlin)  // Dotenv library for Kotlin
 }
 
 tasks.test {
     useJUnitPlatform()  // Configure tests to use JUnit 5
+    finalizedBy(tasks.jacocoTestReport)
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
+    }
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+    }
 }
 
 tasks.jar {
@@ -66,7 +86,6 @@ tasks.jar {
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-
 
 kotlin {
     jvmToolchain(17)  // Set JVM toolchain to Java 17
